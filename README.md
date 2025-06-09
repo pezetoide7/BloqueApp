@@ -94,3 +94,4 @@ Para que el bloqueo funcione correctamente, es fundamental usar el nombre exacto
     Si lanzas de nuevo AppBlockerPy, se cargará la última configuración.
     El watcher continúa funcionando en segundo plano mientras no cierres el proceso.
     Puedes compilar todo a .exe si lo deseas, pero no es obligatorio para usarlo.
+    Cambiar el nombre del python al actual supondría trabajar gratis durante 10 minutos más, así que se queda con el nombre "AppBlockerPy.py", también conocido como nombre génerico 23.
