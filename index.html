@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gestor de Bloqueo</title>
+  <!-- Carga el CSS desde /static/style.css -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="main-layout-container">
+    <div class="central-area-outer">
+      <div class="top-labels">
+        <div class="label-ubicacion">Ubicación del archivo</div>
+        <div class="label-dias">Días del bloqueo</div>
+      </div>
+      <div class="central-area-inner">
+        <!-- Fila plantilla: solo 1 en el HTML -->
+        <div class="file-row">
+          <button class="remove-btn">X</button>
+          <input type="text" class="file-path-input" placeholder="Ruta al .exe">
+          <div class="day-selectors">
+            <span class="day-circle">L</span>
+            <span class="day-circle">M</span>
+            <span class="day-circle">X</span>
+            <span class="day-circle">J</span>
+            <span class="day-circle">V</span>
+            <span class="day-circle">S</span>
+            <span class="day-circle">D</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="side-panel-right">
+      <button class="side-btn" id="saveBtn">Guardar</button>
+      <button class="side-btn" id="resetBtn">Restablecer</button>
+      <button class="side-btn large-btn" id="startLockBtn">Iniciar bloqueo</button>
+    </div>
+  </div>
+
+  <!-- Inyectamos la configuración inicial desde Flask -->
+  <script>
+    const initialConfig = {{ bloqueos|tojson }};
+  </script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 0) Clonar la fila para tener 10 en total
+    const inner = document.querySelector('.central-area-inner');
+    const template = inner.querySelector('.file-row').cloneNode(true);
+    for (let i = 1; i < 10; i++) {
+      inner.appendChild(template.cloneNode(true));
+    }
+
+    const filas = Array.from(inner.querySelectorAll('.file-row'));
+
+    // 1) Precargar configuración existente
+    initialConfig.forEach((item, idx) => {
+      if (idx >= filas.length) return;
+      const fila = filas[idx];
+      fila.querySelector('.file-path-input').value = item.ruta;
+      fila.querySelectorAll('.day-circle').forEach(c => {
+        if (item.dias.includes(c.textContent)) {
+          c.classList.add('selected');
+        }
+      });
+    });
+
+    // 2) Alternar selección de días
+    inner.querySelectorAll('.day-circle').forEach(circle => {
+      circle.addEventListener('click', () => {
+        circle.classList.toggle('selected');
+      });
+    });
+
+    // 3) Botón "X" para borrar fila
+    inner.querySelectorAll('.remove-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const fila = btn.closest('.file-row');
+        fila.querySelector('.file-path-input').value = '';
+        fila.querySelectorAll('.day-circle.selected')
+            .forEach(c => c.classList.remove('selected'));
+      });
+    });
+
+    // 4) Botón RESTABLECER: limpia TODO
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      if (!confirm('¿Seguro que quieres borrar toda la configuración actual?')) return;
+      filas.forEach(fila => {
+        fila.querySelector('.file-path-input').value = '';
+        fila.querySelectorAll('.day-circle.selected')
+            .forEach(c => c.classList.remove('selected'));
+      });
+    });
+
+    // 5) Botón GUARDAR: envía config.json al servidor Flask
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      const bloqueos = filas.map(fila => {
+        const ruta = fila.querySelector('.file-path-input').value.trim();
+        const dias = Array.from(fila.querySelectorAll('.day-circle.selected'))
+                          .map(c => c.textContent);
+        return ruta ? { ruta, dias } : null;
+      }).filter(x => x !== null);
+
+      if (bloqueos.length === 0) {
+        alert('No hay aplicaciones que guardar.');
+        return;
+      }
+
+      fetch('/save_config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bloqueos })
+      })
+      .then(res => res.json())
+      .then(resp => {
+        if (resp.status === 'ok') {
+          alert('Configuración guardada en config.json');
+        } else {
+          alert('Error al guardar: ' + resp.message);
+        }
+      })
+      .catch(err => alert('Error de red: ' + err));
+    });
+
+    // 6) Botón INICIAR BLOQUEO: lanza watcher y cierra el servidor
+    document.getElementById('startLockBtn').addEventListener('click', () => {
+      if (!confirm('¿Estás seguro de que quieres iniciar el bloqueo?')) return;
+      fetch('/start_watcher', { method: 'POST' })
+        .then(res => res.json())
+        .then(resp => {
+          if (resp.status === 'ok') {
+            alert('Watcher iniciado. Esta ventana se cerrará.');
+            window.close();
+          } else {
+            alert('Error al iniciar watcher: ' + resp.message);
+          }
+        })
+        .catch(err => alert('Error de red: ' + err));
+    });
+  });
+  </script>
+</body>
+</html>

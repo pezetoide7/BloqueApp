@@ -1,0 +1,262 @@
+/* Reset Básico */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center; /* Centra el contenido horizontalmente en la página */
+    align-items: center;   /* Centra el contenido verticalmente en la página */
+    min-height: 100vh;     /* Ocupa al menos toda la altura de la ventana */
+    background-color: #1A1A1A; /* Un fondo muy oscuro */
+    overflow: hidden; /* Evita barras de desplazamiento innecesarias en el body */
+}
+
+/* Contenedor principal que une las dos secciones (central y lateral) */
+.main-layout-container {
+    display: flex; /* Para que los hijos (central-area-outer y side-panel-right) se pongan en fila */
+    width: 1920px; /* Ancho total del diseño, como en la imagen inicial */
+    height: 1080px; /* Alto total del diseño, como en la imagen inicial */
+    box-sizing: border-box;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Zona Central Exterior (el marco oscuro) */
+.central-area-outer {
+    width: 1510px; /* Ancho fijo para esta sección */
+    height: 950px; /* Altura fija para esta sección, como en tus medidas */
+    background-color: #333333; /* Color oscuro del marco central */
+    border-radius: 15px; /* Redondeo de 15px */
+    padding: 20px; /* Padding general dentro del contenedor oscuro */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    margin-right: 20px; /* Espacio entre la zona central y el panel lateral */
+    position: relative; /* Es crucial para posicionar .top-labels de forma absoluta */
+    border: 1px solid #282828; /* Un borde sutil más oscuro */
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.7); /* Sombra más pronunciada */
+}
+
+/* Títulos/Labels Superiores (Ahora son elementos interactivos en sí mismos) */
+.top-labels {
+    display: flex;
+    width: calc(100% - 40px); /* Ajustamos al 100% del padre menos el padding lateral */
+    justify-content: flex-start;
+    color: #EEE;
+    font-size: 1.2em;
+    font-weight: bold;
+    box-sizing: border-box;
+
+    position: absolute;
+    top: 20px; /* Alineado con el padding superior de .central-area-outer */
+    left: 20px; /* Alineado con el padding izquierdo de .central-area-outer */
+    z-index: 1; /* Asegura que estén por encima de .central-area-inner */
+}
+
+/* ESTILOS PARA LOS LABELS "UBICACIÓN DEL ARCHIVO" Y "DÍAS DEL BLOQUEO" */
+.label-ubicacion, .label-dias {
+    height: 50px; /* Altura igual a los inputs y botones */
+    background-color: #555555; /* Fondo oscuro */
+    color: #EEE; /* Texto blanco */
+    border: 1px solid #444444; /* Borde oscuro */
+    border-radius: 30px; /* Bordes redondeados */
+    display: flex; /* Para centrar el texto vertical y horizontalmente */
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    font-size: 1.1em; /* Ajusta el tamaño de la fuente */
+    padding: 0 20px; /* Añade padding horizontal para el texto */
+    flex-shrink: 0;
+    box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.4); /* Sombra interna similar a los inputs */
+}
+
+.label-ubicacion {
+    width: 890px; /* Ancho del input */
+    margin-left: calc(50px + 20px); /* Margen para alinearse con el inicio del input (X + gap) */
+}
+
+.label-dias {
+    width: calc(7 * 50px + 6 * 10px); /* Ancho total del grupo de días */
+    /* CAMBIO AQUI: Reducimos el margen aún más para acercar los días al input */
+    margin-left: 30px; /* Reducido de 40px a 30px */
+    flex-shrink: 0;
+}
+
+/* Contenedor Interior Gris Claro */
+.central-area-inner {
+    background-color: #E0E0E0; /* Gris claro */
+    width: 100%; /* Ocupa el 100% del espacio disponible de .central-area-outer */
+    height: 100%; /* Ocupa la altura restante dentro de .central-area-outer */
+    border-radius: 15px;
+    padding: 20px; /* Padding interno para las filas de elementos */
+    padding-top: 20px; /* Volvemos al padding normal */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Espaciado vertical entre filas */
+    overflow-y: auto; /* Para desplazamiento si hay muchas filas */
+    scrollbar-width: thin;
+    scrollbar-color: #BBB #DDD;
+
+    border-top: 5px solid #BBBBBB; /* Un gris más oscuro para el borde superior */
+    border-left: 1px solid #C0C0C0;
+    border-right: 1px solid #C0C0C0;
+    border-bottom: 1px solid #C0C0C0;
+    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.2); /* Sombra interna para un efecto de profundidad */
+
+    position: relative;
+    top: calc(50px + 20px); /* Mueve el contenedor hacia abajo para dejar espacio a los labels, 50px (altura label) + 20px (gap) */
+    height: calc(100% - (50px + 20px)); /* Reduce la altura para que el top no cause overflow */
+}
+
+
+/* Estilos de la barra de desplazamiento para navegadores WebKit (Chrome, Safari) */
+.central-area-inner::-webkit-scrollbar {
+    width: 8px;
+}
+.central-area-inner::-webkit-scrollbar-track {
+    background: #DDD;
+    border-radius: 10px;
+}
+.central-area-inner::-webkit-scrollbar-thumb {
+    background-color: #BBB;
+    border-radius: 10px;
+    border: 2px solid #DDD;
+}
+
+/* Filas de Elementos Interactivos */
+.file-row {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Espaciado entre la X y el input */
+    height: 50px;
+    flex-shrink: 0; /* Evita que se encoja si el contenedor es más pequeño */
+}
+
+.remove-btn {
+    width: 50px;
+    height: 50px;
+    background-color: #A00000; /* Color rojo más oscuro como en el diseño */
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1.5em;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease;
+    border: 1px solid #700000; /* Borde más oscuro */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Sombra para profundidad */
+}
+
+.remove-btn:hover {
+    background-color: #C00000; /* Un rojo un poco más claro al pasar el ratón */
+}
+
+.file-path-input {
+    width: 890px;
+    height: 50px;
+    background-color: #555555;
+    border: none;
+    border-radius: 30px;
+    color: #EEE;
+    padding: 0 20px;
+    box-sizing: border-box;
+    font-size: 1em;
+    flex-shrink: 0;
+    border: 1px solid #444444; /* Borde sutil */
+    box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.4); /* Sombra interna para un efecto hundido */
+}
+
+.file-path-input::placeholder {
+    color: #BBB;
+}
+
+.day-selectors {
+    display: flex;
+    gap: 10px; /* Espaciado entre los círculos de día */
+    justify-content: flex-start;
+    flex-shrink: 0;
+    /* CAMBIO AQUI: Reducimos el margen aún más para acercar los días al input */
+    margin-left: 30px; /* Reducido de 40px a 30px */
+}
+
+.day-circle {
+    width: 50px;
+    height: 50px;
+    background-color: #555555;
+    color: #EEE;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.1em;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+    border: 1px solid #444444; /* Borde sutil */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Sombra para profundidad */
+}
+
+.day-circle:hover {
+    background-color: #666666;
+}
+
+/* --- NUEVO CSS AÑADIDO --- */
+.day-circle.selected {
+    background-color: #4b5563; /* gris oscuro */
+    color: white;
+    border: 1px solid #1f2937; /* gris más oscuro */
+}
+/* --- FIN NUEVO CSS AÑADIDO --- */
+
+
+/* Pestaña Lateral Derecha */
+.side-panel-right {
+    width: 360px; /* Ancho fijo para la pestaña */
+    height: 950px; /* Misma altura que el .central-area-outer para que se alineen */
+    background-color: #D0D0D0; /* Gris más claro para la pestaña */
+    padding: 30px 15px; /* Padding superior/inferior y lateral */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end; /* Empuja los elementos a la parte inferior */
+    gap: 20px; /* Espaciado entre los botones */
+    flex-shrink: 0;
+    border-radius: 15px; /* Bordes redondeados */
+    border: 1px solid #B0B0B0; /* Borde más claro */
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5); /* Sombra para profundidad */
+}
+
+.side-btn {
+    width: 330px;
+    background-color: #555555; /* Fondo más oscuro como en el diseño */
+    color: #EEE; /* Texto blanco */
+    border: 1px solid #444444; /* Borde más oscuro */
+    border-radius: 30px;
+    padding: 15px 0;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.side-btn:hover {
+    background-color: #666666; /* Un poco más claro al pasar el ratón */
+    border-color: #555555;
+}
+
+.side-btn.large-btn {
+    height: 120px;
+    border-radius: 20px; /* Menos redondeado que los otros botones laterales */
+}
